@@ -1,0 +1,23 @@
+steps:
+  - id: cloud-pubsub-emulator
+    name: gcr.io/kaniko-project/executor:v1.6.0-debug
+    args:
+      - --destination=gcr.io/$PROJECT_ID/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
+      - --cache=true
+      - --cache-repo=gcr.io/$PROJECT_ID/cloud-pubsub-emulator/cache
+      - --dockerfile=Dockerfile
+      - --context=dir:///workspace
+      - --reproducible
+      - --log-timestamp
+      - --skip-unused-stages=true
+      - --snapshotMode=redo
+      - --use-new-run
+      - --build-arg=PUBSUB_EMULATOR_BUILD_NUMBER=${_PUBSUB_EMULATOR_BUILD_NUMBER}
+
+substitutions:
+  _PUBSUB_EMULATOR_BUILD_NUMBER: "20210719201955"
+
+tags:
+  - "cloud-pubsub-emulator"
+
+timeout: 900s  # 15min

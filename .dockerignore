@@ -1,0 +1,9 @@
+.git/
+.dockerignore
+.gcloudignore
+.gitattributes
+.gitignore
+Dockerfile
+LICENSE
+README.md
+cloudbuild.yaml
