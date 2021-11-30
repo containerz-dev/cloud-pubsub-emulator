@@ -6,5 +6,10 @@ RUN set -eux; \
 
 ENV PATH /pubsub-emulator/bin:${PATH}
 
+LABEL org.opencontainers.image.authors "The containerz authors"
+LABEL org.opencontainers.image.url "https://github.com/containerz-dev/cloud-pubsub-emulator"
+LABEL org.opencontainers.image.source "https://github.com/containerz-dev/cloud-pubsub-emulator"
+LABEL org.opencontainers.image.licenses "BSD-3-Clause"
+
 EXPOSE 8085/tcp
 ENTRYPOINT ["cloud-pubsub-emulator"]
