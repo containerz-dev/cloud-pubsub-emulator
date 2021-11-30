@@ -1,23 +1,37 @@
 steps:
   - id: cloud-pubsub-emulator
-    name: gcr.io/kaniko-project/executor:v1.6.0-debug
+    name: docker:22.06-rc-cli
+    entrypoint: "docker"
+    env:
+      - "DOCKER_BUILDKIT=1"
+      - "DOCKER_CLI_EXPERIMENTAL=enabled"
     args:
-      - --destination=gcr.io/$PROJECT_ID/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-      - --cache=true
-      - --cache-repo=gcr.io/$PROJECT_ID/cloud-pubsub-emulator/cache
-      - --dockerfile=Dockerfile
-      - --context=dir:///workspace
-      - --reproducible
-      - --log-timestamp
-      - --skip-unused-stages=true
-      - --snapshotMode=redo
-      - --use-new-run
+      - buildx
+      - build
+      - --pull
+      - --build-arg=BUILDKIT_INLINE_BUILDINFO_ATTRS=1
+      - --build-arg=BUILDKIT_INLINE_CACHE=1
+      - --build-arg=OPENJDK_TAG=${_OPENJDK_TAG}
       - --build-arg=PUBSUB_EMULATOR_BUILD_NUMBER=${_PUBSUB_EMULATOR_BUILD_NUMBER}
+      - --cache-from=type=registry,ref=adoptopenjdk/openjdk11:${_OPENJDK_TAG}
+      - --label=org.opencontainers.image.revision=${COMMIT_SHA}
+      - --output=type=registry
+      - --target=cloud-pubsub-emulator
+      - --tag=asia-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
+      - .
+
+images:
+  - asia-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
 
 substitutions:
+  _OPENJDK_TAG: "alpine-slim"
   _PUBSUB_EMULATOR_BUILD_NUMBER: "20210719201955"
 
 tags:
-  - "cloud-pubsub-emulator"
+  - "gcp.cloud-pubsub-emulator"
+
+options:
+  dynamic_substitutions: true
+  requestedVerifyOption: 'VERIFIED'
 
 timeout: 900s  # 15min
