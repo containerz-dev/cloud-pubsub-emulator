@@ -1,59 +1,49 @@
 steps:
-  - id: cloud-pubsub-emulator
+  - id: bootstrap-builder
     name: docker:22.06-rc-cli
-    entrypoint: "docker"
     env:
       - "DOCKER_BUILDKIT=1"
       - "DOCKER_CLI_EXPERIMENTAL=enabled"
+    entrypoint: "docker"
+    args:
+      - buildx
+      - create
+      - --name=buildkitd 
+      - --node=buildkitd
+      - --bootstrap
+      - --buildkitd-flags='--containerd-worker-snapshotter=stargz'
+      - --driver=docker-container
+      - --platform=linux/amd64,linux/arm64
+      - --driver-opt=image=moby/buildkit:master
+      - --use
+    waitFor:
+      - "-"
+
+  - id: cloud-pubsub-emulator
+    name: docker:22.06-rc-cli
+    env:
+      - "DOCKER_BUILDKIT=1"
+      - "DOCKER_CLI_EXPERIMENTAL=enabled"
+    entrypoint: "docker"
     args:
       - buildx
       - build
+      - --platform=linux/amd64,linux/arm64
       - --pull
-      - --build-arg=BUILDKIT_INLINE_BUILDINFO_ATTRS=1
       - --build-arg=BUILDKIT_INLINE_CACHE=1
-      - --build-arg=OPENJDK_TAG=${_OPENJDK_TAG}
+      - --build-arg=BUILDKIT_INLINE_BUILDINFO_ATTRS=1
+      - --build-arg=OPENJDK_VERSION=${_OPENJDK_VERSION}
       - --build-arg=PUBSUB_EMULATOR_BUILD_NUMBER=${_PUBSUB_EMULATOR_BUILD_NUMBER}
-      - --cache-from=type=registry,ref=adoptopenjdk/openjdk11:${_OPENJDK_TAG}
+      - --cache-from=type=registry,ref=amazoncorretto:${_OPENJDK_VERSION}
       - --label=org.opencontainers.image.revision=${COMMIT_SHA}
-      - --output=type=docker
+      - --output=type=registry
       - --target=cloud-pubsub-emulator
-      - --tag=docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
+      - --tag=asia-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
+      - --tag=us-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
       - .
 
-  - id: tagging-us
-    name: docker:22.06-rc-cli
-    entrypoint: "docker"
-    env:
-      - "DOCKER_BUILDKIT=1"
-      - "DOCKER_CLI_EXPERIMENTAL=enabled"
-    args:
-      - image
-      - tag
-      - docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-      - us-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-    waitFor:
-      - "cloud-pubsub-emulator"
-
-  - id: tagging-asia
-    name: docker:22.06-rc-cli
-    entrypoint: "docker"
-    env:
-      - "DOCKER_BUILDKIT=1"
-      - "DOCKER_CLI_EXPERIMENTAL=enabled"
-    args:
-      - image
-      - tag
-      - docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-      - asia-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-    waitFor:
-      - "cloud-pubsub-emulator"
-
-images:
-  - us-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-  - asia-docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
-
 substitutions:
-  _OPENJDK_TAG: "alpine-slim"
+  _OPENJDK_VERSION: "11-alpine"
   _PUBSUB_EMULATOR_BUILD_NUMBER: "20220722145557"
 
 tags:
