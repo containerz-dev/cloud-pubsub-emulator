@@ -54,7 +54,7 @@ images:
 
 substitutions:
   _OPENJDK_TAG: "alpine-slim"
-  _PUBSUB_EMULATOR_BUILD_NUMBER: "20210719201955"
+  _PUBSUB_EMULATOR_BUILD_NUMBER: "20220722145557"
 
 tags:
   - "gcp.cloud-pubsub-emulator"
