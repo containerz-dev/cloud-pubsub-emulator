@@ -15,7 +15,7 @@ steps:
       - --build-arg=PUBSUB_EMULATOR_BUILD_NUMBER=${_PUBSUB_EMULATOR_BUILD_NUMBER}
       - --cache-from=type=registry,ref=adoptopenjdk/openjdk11:${_OPENJDK_TAG}
       - --label=org.opencontainers.image.revision=${COMMIT_SHA}
-      - --output=type=registry
+      - --output=type=docker
       - --target=cloud-pubsub-emulator
       - --tag=docker.pkg.dev/${PROJECT_ID}/gcp/cloud-pubsub-emulator:${_PUBSUB_EMULATOR_BUILD_NUMBER}
       - .
