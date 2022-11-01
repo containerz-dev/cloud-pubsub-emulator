@@ -12,9 +12,8 @@ RUN apt-get update && \
 	\
 	curl -sSL ${PUBSUB_EMULATOR_URL} | tar xfz - --strip-components=1 -C /
 
-WORKDIR /pubsub-emulator/bin
 EXPOSE 8085/tcp
-ENTRYPOINT ["cloud-pubsub-emulator"]
+ENTRYPOINT ["/pubsub-emulator/bin/cloud-pubsub-emulator"]
 
 LABEL org.opencontainers.image.authors       "The containerz authors"
 LABEL org.opencontainers.image.url           "https://github.com/containerz-dev/cloud-pubsub-emulator"
