@@ -32,9 +32,8 @@ steps:
       - --pull
       - --build-arg=BUILDKIT_INLINE_CACHE=1
       - --build-arg=BUILDKIT_INLINE_BUILDINFO_ATTRS=1
-      - --build-arg=OPENJDK_VERSION=${_OPENJDK_VERSION}
+      - --cache-from=type=registry,ref=debian:bullseye-slim
       - --build-arg=PUBSUB_EMULATOR_BUILD_NUMBER=${_PUBSUB_EMULATOR_BUILD_NUMBER}
-      - --cache-from=type=registry,ref=amazoncorretto:${_OPENJDK_VERSION}
       - --label=org.opencontainers.image.revision=${COMMIT_SHA}
       - --output=type=registry
       - --target=cloud-pubsub-emulator
@@ -43,7 +42,6 @@ steps:
       - .
 
 substitutions:
-  _OPENJDK_VERSION: "11-alpine"
   _PUBSUB_EMULATOR_BUILD_NUMBER: "20220722145557"
 
 tags:
