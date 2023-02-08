@@ -42,7 +42,7 @@ steps:
       - .
 
 substitutions:
-  _PUBSUB_EMULATOR_BUILD_NUMBER: "20220722145557"
+  _PUBSUB_EMULATOR_BUILD_NUMBER: "20230120151534"
 
 tags:
   - "gcp.cloud-pubsub-emulator"
