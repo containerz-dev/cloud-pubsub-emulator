@@ -1,0 +1,64 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PUBSUB_EMULATOR_BUILD_NUMBER: "20230120151534"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
+      # https://github.com/crazy-max/ghaction-github-runtime
+      - name: Expose GitHub Runtime for buildkit gha cache
+        uses: crazy-max/ghaction-github-runtime@v2
+
+      # https://github.com/docker/login-action#github-container-registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: latest
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
+          platforms: |
+            linux/amd64
+            linux/arm64
+          buildkitd-flags: --debug --containerd-worker-snapshotter=stargz
+
+      # https://github.com/docker/build-push-action
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          build-args: |
+            PUBSUB_EMULATOR_BUILD_NUMBER=${{ env.PUBSUB_EMULATOR_BUILD_NUMBER }}
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          outputs: type=registry
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/containerz-dev/cloud-pubsub-emulator:${{ env.PUBSUB_EMULATOR_BUILD_NUMBER }}
+          target: cloud-pubsub-emulator
