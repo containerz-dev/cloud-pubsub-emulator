@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PUBSUB_EMULATOR_BUILD_NUMBER: "20230120151534"
+  PUBSUB_EMULATOR_BUILD_NUMBER: "20230224152814"
 
 jobs:
   build:
@@ -19,6 +19,7 @@ jobs:
       id-token: write
 
     steps:
+      # https://github.com/actions/checkout
       - name: Checkout branch
         uses: actions/checkout@v3
 

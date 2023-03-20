@@ -6,7 +6,7 @@ ARG PUBSUB_EMULATOR_BUILD_NUMBER
 LABEL org.opencontainers.image.authors       "The containerz authors"
 LABEL org.opencontainers.image.url           "https://github.com/containerz-dev/cloud-pubsub-emulator"
 LABEL org.opencontainers.image.source        "https://github.com/containerz-dev/cloud-pubsub-emulator/Dockerfile"
-LABEL org.opencontainers.image.documentation "Cloud SDK less cloud pubsub emulator container image"
+LABEL org.opencontainers.image.documentation "Cloud SDK less Cloud Pub/Sub emulator container"
 LABEL org.opencontainers.image.base.name     "debian:bullseye-slim"
 LABEL org.opencontainers.image.version       "${PUBSUB_EMULATOR_BUILD_NUMBER}"
 LABEL org.opencontainers.image.licenses      "BSD-3-Clause"
