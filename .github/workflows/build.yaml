@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PUBSUB_EMULATOR_BUILD_NUMBER: "20231006153333"
+  PUBSUB_EMULATOR_BUILD_NUMBER: "20231016163610"
 
 jobs:
   build:
